@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowchart — Toàn bộ pipeline dự án trending music</title>
+<style>
+  body { margin: 0; padding: 24px; font-family: sans-serif; background: #fff; }
+  svg text.th { font-size: 14px; font-weight: 500; fill: #2C2C2A; }
+  svg text.ts { font-size: 12px; font-weight: 400; fill: #5F5E5A; }
+  .node { cursor: pointer; }
+  .node:hover { opacity: 0.85; }
+  .c-gray rect { fill: #F1EFE8; stroke: #5F5E5A; }
+  .c-blue rect  { fill: #E6F1FB; stroke: #185FA5; }
+  .c-blue text.th { fill: #0C447C; }
+  .c-blue text.ts { fill: #185FA5; }
+  .c-teal rect  { fill: #E1F5EE; stroke: #0F6E56; }
+  .c-teal text.th { fill: #085041; }
+  .c-teal text.ts { fill: #0F6E56; }
+  .c-purple rect { fill: #EEEDFE; stroke: #534AB7; }
+  .c-purple text.th { fill: #3C3489; }
+  .c-purple text.ts { fill: #534AB7; }
+  .c-coral rect { fill: #FAECE7; stroke: #993C1D; }
+  .c-coral text.th { fill: #712B13; }
+  .c-coral text.ts { fill: #993C1D; }
+  .c-amber rect { fill: #FAEEDA; stroke: #854F0B; }
+  .c-amber text.th { fill: #633806; }
+  .c-amber text.ts { fill: #854F0B; }
+  .arr { stroke: #888780; stroke-width: 1.5; fill: none; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a18; }
+    svg text.th { fill: #D3D1C7; }
+    svg text.ts { fill: #888780; }
+    .c-gray rect { fill: #444441; stroke: #888780; }
+    .c-blue rect  { fill: #0C447C; stroke: #85B7EB; }
+    .c-blue text.th { fill: #B5D4F4; }
+    .c-blue text.ts { fill: #85B7EB; }
+    .c-teal rect  { fill: #085041; stroke: #5DCAA5; }
+    .c-teal text.th { fill: #9FE1CB; }
+    .c-teal text.ts { fill: #5DCAA5; }
+    .c-purple rect { fill: #3C3489; stroke: #AFA9EC; }
+    .c-purple text.th { fill: #CECBF6; }
+    .c-purple text.ts { fill: #AFA9EC; }
+    .c-coral rect { fill: #712B13; stroke: #F0997B; }
+    .c-coral text.th { fill: #F5C4B3; }
+    .c-coral text.ts { fill: #F0997B; }
+    .c-amber rect { fill: #633806; stroke: #EF9F27; }
+    .c-amber text.th { fill: #FAC775; }
+    .c-amber text.ts { fill: #EF9F27; }
+    .arr { stroke: #888780; }
+  }
+</style>
+</head>
+<body>
+<svg width="100%" viewBox="0 0 680 1060" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ĐIỂM KHỞI ĐẦU -->
+<g class="node c-gray">
+  <rect x="230" y="20" width="220" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">main_page.py</text>
+</g>
+<line x1="340" y1="64" x2="340" y2="90" class="arr" marker-end="url(#arrow)"/>
+
+<!-- GIAI ĐOẠN 1 -->
+<rect x="30" y="90" width="620" height="196" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+<text class="ts" x="48" y="110">Giai đoạn 1 — Thu thập HTML</text>
+
+<g class="node c-blue">
+  <rect x="60" y="120" width="240" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="180" y="140" text-anchor="middle" dominant-baseline="central">get_information_web.py</text>
+  <text class="ts" x="180" y="158" text-anchor="middle" dominant-baseline="central">Tải HTML chart nhaccuatui.com</text>
+</g>
+<g class="node c-blue">
+  <rect x="380" y="120" width="240" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="140" text-anchor="middle" dominant-baseline="central">filter_data_in_each_songs.py</text>
+  <text class="ts" x="500" y="158" text-anchor="middle" dominant-baseline="central">Trích link từng bài (string.find)</text>
+</g>
+<g class="node c-gray">
+  <rect x="60" y="202" width="240" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="180" y="222" text-anchor="middle" dominant-baseline="central">information_web.txt</text>
+</g>
+<g class="node c-gray">
+  <rect x="380" y="202" width="240" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="222" text-anchor="middle" dominant-baseline="central">link_song.txt</text>
+</g>
+<line x1="180" y1="176" x2="180" y2="202" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="176" x2="500" y2="202" class="arr" marker-end="url(#arrow)"/>
+<path d="M300 222 L380 150" fill="none" stroke="#B4B2A9" stroke-width="1" marker-end="url(#arrow)" opacity="0.5"/>
+<line x1="180" y1="242" x2="180" y2="310" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="242" x2="500" y2="310" class="arr" marker-end="url(#arrow)"/>
+
+<!-- GIAI ĐOẠN 2 -->
+<rect x="30" y="310" width="620" height="196" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+<text class="ts" x="48" y="330">Giai đoạn 2 — Crawl chi tiết</text>
+
+<g class="node c-teal">
+  <rect x="60" y="340" width="240" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="180" y="360" text-anchor="middle" dominant-baseline="central">webcrawling_nhaccuatui.py</text>
+  <text class="ts" x="180" y="378" text-anchor="middle" dominant-baseline="central">hearts, shares từng bài</text>
+</g>
+<g class="node c-teal">
+  <rect x="380" y="340" width="240" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="360" text-anchor="middle" dominant-baseline="central">webcrawling_Lastfm.py</text>
+  <text class="ts" x="500" y="378" text-anchor="middle" dominant-baseline="central">listeners qua Last.fm API</text>
+</g>
+<g class="node c-gray">
+  <rect x="60" y="422" width="240" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="180" y="442" text-anchor="middle" dominant-baseline="central">du_lieu_nct.json</text>
+</g>
+<g class="node c-gray">
+  <rect x="380" y="422" width="240" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="500" y="442" text-anchor="middle" dominant-baseline="central">du_lieu_lastfm.json</text>
+</g>
+<line x1="180" y1="396" x2="180" y2="422" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="396" x2="500" y2="422" class="arr" marker-end="url(#arrow)"/>
+<line x1="180" y1="462" x2="180" y2="528" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="462" x2="500" y2="528" class="arr" marker-end="url(#arrow)"/>
+
+<!-- GIAI ĐOẠN 3 -->
+<rect x="30" y="528" width="620" height="220" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+<text class="ts" x="48" y="548">Giai đoạn 3 — Hợp nhất, tính điểm, xếp hạng</text>
+
+<g class="node c-purple">
+  <rect x="190" y="558" width="300" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="578" text-anchor="middle" dominant-baseline="central">merge_data.py</text>
+  <text class="ts" x="340" y="596" text-anchor="middle" dominant-baseline="central">Giao thoa NCT ∩ Last.fm → điểm + rank</text>
+</g>
+<line x1="180" y1="528" x2="280" y2="558" class="arr" marker-end="url(#arrow)"/>
+<line x1="500" y1="528" x2="400" y2="558" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray">
+  <rect x="52" y="642" width="172" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="138" y="658" text-anchor="middle" dominant-baseline="central">total_score</text>
+  <text class="ts" x="138" y="672" text-anchor="middle" dominant-baseline="central">L + H×50 + S×500</text>
+</g>
+<g class="node c-gray">
+  <rect x="254" y="642" width="172" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="658" text-anchor="middle" dominant-baseline="central">score_growth</text>
+  <text class="ts" x="340" y="672" text-anchor="middle" dominant-baseline="central">Điểm mới − ban đầu</text>
+</g>
+<g class="node c-gray">
+  <rect x="456" y="642" width="172" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="542" y="658" text-anchor="middle" dominant-baseline="central">rank_total / rank_growth</text>
+  <text class="ts" x="542" y="672" text-anchor="middle" dominant-baseline="central">Xếp hạng theo 2 chiều</text>
+</g>
+<line x1="290" y1="614" x2="190" y2="642" class="arr" marker-end="url(#arrow)"/>
+<line x1="340" y1="614" x2="340" y2="642" class="arr" marker-end="url(#arrow)"/>
+<line x1="390" y1="614" x2="490" y2="642" class="arr" marker-end="url(#arrow)"/>
+<line x1="138" y1="682" x2="290" y2="724" class="arr" marker-end="url(#arrow)"/>
+<line x1="340" y1="682" x2="340" y2="724" class="arr" marker-end="url(#arrow)"/>
+<line x1="542" y1="682" x2="390" y2="724" class="arr" marker-end="url(#arrow)"/>
+
+<g class="node c-gray">
+  <rect x="190" y="724" width="300" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="744" text-anchor="middle" dominant-baseline="central">du_lieu_giao_thoa.json</text>
+</g>
+<line x1="260" y1="764" x2="180" y2="830" class="arr" marker-end="url(#arrow)"/>
+<line x1="420" y1="764" x2="500" y2="830" class="arr" marker-end="url(#arrow)"/>
+
+<!-- GIAI ĐOẠN 4 -->
+<rect x="30" y="830" width="620" height="196" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+<text class="ts" x="48" y="850">Giai đoạn 4 — Lưu trữ &amp; Phân tích &amp; Trực quan</text>
+
+<g class="node c-coral">
+  <rect x="50" y="862" width="180" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="140" y="882" text-anchor="middle" dominant-baseline="central">MongoDB</text>
+  <text class="ts" x="140" y="900" text-anchor="middle" dominant-baseline="central">bang_xep_hang_giao_thoa</text>
+</g>
+<g class="node c-amber">
+  <rect x="260" y="862" width="180" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="350" y="882" text-anchor="middle" dominant-baseline="central">eda_numerical_only.py</text>
+  <text class="ts" x="350" y="900" text-anchor="middle" dominant-baseline="central">Thống kê, tương quan, IQR</text>
+</g>
+<g class="node c-amber">
+  <rect x="470" y="862" width="180" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="560" y="882" text-anchor="middle" dominant-baseline="central">data_visualization.py</text>
+  <text class="ts" x="560" y="900" text-anchor="middle" dominant-baseline="central">5 biểu đồ → thư mục charts/</text>
+</g>
+
+<g class="node c-gray">
+  <rect x="200" y="960" width="280" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="980" text-anchor="middle" dominant-baseline="central">api_server.py (đầu ra cuối)</text>
+</g>
+<line x1="140" y1="918" x2="280" y2="960" class="arr" marker-end="url(#arrow)"/>
+<line x1="350" y1="918" x2="340" y2="960" class="arr" marker-end="url(#arrow)"/>
+<line x1="560" y1="918" x2="400" y2="960" class="arr" marker-end="url(#arrow)"/>
+</svg>
+</body>
+</html>
