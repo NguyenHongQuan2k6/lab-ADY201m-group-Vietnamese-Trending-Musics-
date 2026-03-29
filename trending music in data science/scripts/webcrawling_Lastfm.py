@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import time
 from datetime import datetime
 
 # ============================================================
@@ -26,6 +27,15 @@ list_top_trending = []
 gio_co_dinh = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 print(f"Bắt đầu tra cứu {len(danh_sach_nct)} bài hát từ Nhaccuatui trên hệ thống Last.fm...")
+
+# =====================================================================
+# BƯỚC 5: TÍCH HỢP HỆ THỐNG & LÀM GIÀU DỮ LIỆU (DATA ENRICHMENT)
+# Các pha thuật toán cốt lõi trong quá trình gọi API:
+# 1. Trích xuất Khóa ngoại (Foreign Key): Dùng 'title' và 'artist' làm từ khóa truy vấn chéo sang hệ thống cơ sở dữ liệu quốc tế.
+# 2. Thuật toán Khớp mờ (Fuzzy Matching): Kích hoạt tham số `autocorrect: 1` trong API Payload để tự động sửa lỗi chính tả, cải thiện tỷ lệ nhận diện bài hát (Match Rate).
+# 3. Điều phối Lưu lượng (Rate Limiting): Cấu hình `time.sleep()` để điều tiết tốc độ gửi yêu cầu, tránh quá tải máy chủ đối tác (DDoS) và ngăn API Key bị khóa.
+# 4. Xử lý Lỗi (Exception Handling / Zero Imputation): Bắt lỗi ngoại lệ (Try/Except). Nếu API không tìm thấy hoặc lỗi mạng, hệ thống tự động xử lý bỏ qua để bảo toàn tiến trình.
+# =====================================================================
 
 # 2. Dùng vòng lặp đem từng bài đi hỏi Last.fm
 for bai in danh_sach_nct:
@@ -76,6 +86,9 @@ for bai in danh_sach_nct:
     except Exception as e:
         print(f" -> Lỗi mạng khi tìm bài {song_name}")
         continue
+    
+    # Kích hoạt điều phối lưu lượng (Rate Limiting)
+    time.sleep(0.2)
 
 # ============================================================
 # LƯU DỮ LIỆU RA FILE JSON 
