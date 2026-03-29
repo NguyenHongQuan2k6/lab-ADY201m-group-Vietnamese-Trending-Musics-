@@ -7,6 +7,12 @@ from bs4 import BeautifulSoup
 url_get = 'https://www.nhaccuatui.com/chart/1-5-d86-2026' 
 # -------------------------------
 
+# =====================================================================
+# GIAI ĐOẠN 4.1: TẢI VÀ LƯU TRỮ MÃ NGUỒN THÔ (OFFLINE CACHE)
+# - Thuật toán/Kỹ thuật: Sử dụng giao thức HTTP GET qua thư viện `requests` để truy xuất mã nguồn trực tiếp từ máy chủ Nhaccuatui.
+# - Ý nghĩa Hệ thống: Mã nguồn HTML được tải về và chuyển hướng luồng dữ liệu (sys.stdout) để ghi thẳng ra file text. Kỹ thuật tạo "Offline Cache" này giúp hệ thống chịu lỗi tốt (Fault-tolerant), giảm thiểu request thừa lên server và bảo vệ IP trong các bước phân tích sau.
+# =====================================================================
+
 try:
     r = requests.get(url_get)
 
