@@ -1,0 +1,621 @@
+!DOCTYPE html
+html lang=vi
+head
+meta charset=UTF-8
+meta name=viewport content=width=device-width,initial-scale=1
+titleTop 50 Vietnam Trending Music — EDA Dashboardtitle
+script src=httpscdnjs.cloudflare.comajaxlibsChart.js4.4.1chart.umd.min.jsscript
+link href=httpsfonts.googleapis.comcss2family=Bebas+Neue&family=Plus+Jakarta+Sanswght@400;500;600;700&display=swap rel=stylesheet
+style
+root{--bg#08090d;--s1#0f1117;--s2#181b24;--s3#222638;--border#252a3a;
+  --acc#e8ff47;--pink#ff4d6d;--cyan#38f5e8;--purple#9b6dff;
+  --green#3dffa0;--blue#4d8fff;--text#eef0ff;--muted#5a6080;--muted2#8890b0;}
+{margin0;padding0;box-sizingborder-box;}
+body{backgroundvar(--bg);colorvar(--text);font-family'Plus Jakarta Sans',sans-serif;}
+
+ ── LOADING SCREEN ── 
+#loading{
+  positionfixed;inset0;backgroundvar(--bg);
+  displayflex;flex-directioncolumn;align-itemscenter;justify-contentcenter;
+  z-index9999;gap20px;transitionopacity .4s;
+}
+#loading.hidden{opacity0;pointer-eventsnone;}
+.loader{
+  width48px;height48px;border3px solid var(--s3);
+  border-top-colorvar(--acc);border-radius50%;
+  animationspin .8s linear infinite;
+}
+@keyframes spin{to{transformrotate(360deg);}}
+.load-text{font-family'Bebas Neue',cursive;font-size18px;colorvar(--muted2);letter-spacing.1em;}
+.load-sub{font-size12px;colorvar(--muted);idloadSub;}
+
+ ── ERROR SCREEN ── 
+#errorScreen{
+  displaynone;positionfixed;inset0;backgroundvar(--bg);
+  align-itemscenter;justify-contentcenter;z-index9998;
+  flex-directioncolumn;gap16px;padding40px;text-aligncenter;
+}
+.err-icon{font-size48px;}
+.err-title{font-family'Bebas Neue',cursive;font-size32px;colorvar(--pink);}
+.err-msg{font-size13px;colorvar(--muted2);max-width480px;line-height1.7;}
+.err-msg code{backgroundvar(--s2);padding2px 8px;border-radius4px;
+  font-familymonospace;font-size12px;colorvar(--acc);}
+.err-btn{
+  margin-top8px;padding10px 24px;backgroundvar(--acc);color#000;
+  bordernone;border-radius6px;font-family'Bebas Neue',cursive;
+  font-size15px;letter-spacing.06em;cursorpointer;
+}
+.err-btnhover{opacity.85;}
+
+ ── LIVE BADGE ── 
+.live-badge{
+  displayinline-flex;align-itemscenter;gap5px;
+  font-size9px;letter-spacing.15em;text-transformuppercase;
+  colorvar(--green);backgroundrgba(61,255,160,.1);
+  border1px solid rgba(61,255,160,.25);border-radius99px;
+  padding3px 9px;
+}
+.live-dot{width6px;height6px;border-radius50%;backgroundvar(--green);
+  animationpulse 1.5s ease infinite;}
+@keyframes pulse{0%,100%{opacity1;}50%{opacity.3;}}
+
+ ── HEADER ── 
+header{backgroundlinear-gradient(135deg,#0f1117,#121828 60%,#0a1020);
+  border-bottom1px solid var(--border);padding40px 44px 32px;
+  positionrelative;overflowhidden;}
+headerbefore{content'';positionabsolute;top-60px;right-40px;width400px;height400px;
+  backgroundradial-gradient(ellipse,rgba(232,255,71,.08),transparent 65%);pointer-eventsnone;}
+headerafter{content'LIVE';positionabsolute;right40px;top50%;transformtranslateY(-50%);
+  font-family'Bebas Neue',cursive;font-size130px;colorrgba(232,255,71,.03);pointer-eventsnone;}
+.h-top{displayflex;align-itemscenter;gap12px;margin-bottom14px;}
+.h-tag{displayinline-flex;align-itemscenter;gap6px;font-size10px;letter-spacing.22em;
+  text-transformuppercase;colorvar(--acc);}
+.h-tagbefore{content'';displayblock;width20px;height2px;backgroundvar(--acc);}
+h1{font-family'Bebas Neue',cursive;font-sizeclamp(36px,6vw,72px);line-height.95;margin-bottom14px;}
+h1 em{colorvar(--acc);font-stylenormal;}
+.h-sub{font-size13px;colorvar(--muted2);line-height1.6;max-width560px;}
+.h-sub b{colorvar(--cyan);}
+.h-updated{font-size10px;colorvar(--muted);margin-top10px;}
+.h-updated span{colorvar(--acc);}
+
+ ── KPI ── 
+.kpi-row{displaygrid;grid-template-columnsrepeat(4,1fr);border-bottom1px solid var(--border);}
+.kpi{padding22px 30px;border-right1px solid var(--border);}
+.kpilast-child{border-rightnone;}
+.kpi-label{font-size9.5px;letter-spacing.18em;text-transformuppercase;colorvar(--muted);margin-bottom10px;}
+.kpi-val{font-family'Bebas Neue',cursive;font-size40px;line-height1;margin-bottom4px;}
+.kpi-note{font-size11px;colorvar(--muted2);}
+.kpi-note b{colorvar(--green);}
+
+ ── GRID ── 
+.grid{displaygrid;grid-template-columns1fr 1fr;}
+.panel{border-right1px solid var(--border);border-bottom1px solid var(--border);padding24px 28px;}
+.panel.nr{border-rightnone;}
+.panel.full{grid-column1-1;border-rightnone;}
+.p-head{displayflex;align-itemscenter;gap8px;margin-bottom5px;}
+.p-title{font-family'Bebas Neue',cursive;font-size15px;letter-spacing.06em;}
+.p-dot{width8px;height8px;border-radius50%;flex-shrink0;}
+.p-desc{font-size11px;colorvar(--muted);margin-bottom16px;line-height1.5;}
+.chart-wrap{height250px;positionrelative;}
+.chart-wrap.tall{height310px;}
+
+ ── RANK TABLE ── 
+.rtable{width100%;border-collapsecollapse;}
+.rtable th{font-size9px;letter-spacing.15em;text-transformuppercase;colorvar(--muted);
+  padding7px 8px;border-bottom1px solid var(--border);text-alignleft;}
+.rtable td{padding7px 8px;font-size11.5px;border-bottom1px solid #1e2232;vertical-alignmiddle;}
+.rtable trlast-child td{border-bottomnone;}
+.rn{displayinline-flex;align-itemscenter;justify-contentcenter;width20px;height20px;
+  border-radius3px;font-family'Bebas Neue',cursive;font-size11px;backgroundvar(--s3);colorvar(--muted2);}
+.rn.g{backgroundvar(--acc);color#000;}.rn.s{background#b8c0d0;color#000;}.rn.b{background#c87941;color#fff;}
+.prog-wrap{displayflex;align-itemscenter;gap5px;}
+.prog-track{flex1;height3px;backgroundvar(--s3);border-radius99px;overflowhidden;}
+.prog-fill{height100%;border-radius99px;}
+.prog-val{font-size10.5px;colorvar(--muted2);white-spacenowrap;min-width48px;text-alignright;}
+.st{font-weight600;font-size12px;}.sa{font-size10px;colorvar(--muted2);}
+
+ ── OUTLIERS ── 
+.out-list{displayflex;flex-directioncolumn;gap7px;}
+.out-item{displayflex;align-itemscenter;gap10px;padding10px 12px;backgroundvar(--s2);
+  border-radius7px;border1px solid var(--border);transitionborder-color .2s;}
+.out-itemhover{border-colorvar(--pink);}
+.out-n{font-family'Bebas Neue',cursive;font-size20px;colorvar(--pink);width24px;flex-shrink0;}
+.out-info{flex1;min-width0;}
+.out-title{font-weight600;font-size12px;white-spacenowrap;overflowhidden;text-overflowellipsis;}
+.out-artist{font-size10px;colorvar(--muted2);}
+.out-val{font-family'Bebas Neue',cursive;font-size13px;colorvar(--pink);white-spacenowrap;}
+.iqr-box{margin-top12px;padding10px 12px;backgroundrgba(255,77,109,.07);
+  border1px solid rgba(255,77,109,.2);border-radius6px;font-size10.5px;colorvar(--muted2);line-height1.6;}
+.iqr-box b{colorvar(--pink);}
+
+ ── SKEWNESS ── 
+.skew-list{displayflex;flex-directioncolumn;gap14px;margin-top2px;}
+.skew-row{displayflex;align-itemscenter;gap9px;}
+.skew-lbl{font-size10.5px;colorvar(--muted2);width100px;flex-shrink0;}
+.skew-track{flex1;height9px;backgroundvar(--s2);border-radius4px;positionrelative;overflowhidden;}
+.skew-bar{positionabsolute;top0;bottom0;left50%;border-radius4px;}
+.skew-v{font-family'Bebas Neue',cursive;font-size13px;width40px;text-alignright;}
+.irow{displaygrid;grid-template-columns1fr 1fr;gap8px;margin-top16px;}
+.ic{padding12px;border-radius7px;backgroundvar(--s2);border1px solid var(--border);}
+.ic-lbl{font-size9px;letter-spacing.15em;text-transformuppercase;colorvar(--muted);margin-bottom5px;}
+.ic-val{font-family'Bebas Neue',cursive;font-size22px;margin-bottom3px;}
+.ic-desc{font-size10px;colorvar(--muted2);line-height1.4;}
+
+ ── CORR ── 
+.corr-leg{displayflex;gap14px;font-size9.5px;colorvar(--muted2);margin-bottom8px;flex-wrapwrap;}
+.corr-leg span{displayflex;align-itemscenter;gap4px;}
+.corr-leg i{displayinline-block;width14px;height7px;border-radius2px;}
+
+ ── TOOLTIP ── 
+#ttip{positionfixed;backgroundvar(--s2);border1px solid var(--border);border-radius7px;
+  padding9px 13px;font-size11px;pointer-eventsnone;opacity0;transitionopacity .15s;
+  z-index100;max-width210px;line-height1.6;box-shadow0 8px 24px rgba(0,0,0,.4);}
+
+ ── FOOTER ── 
+footer{padding16px 44px;border-top1px solid var(--border);displayflex;
+  justify-contentspace-between;font-size10px;colorvar(--muted);}
+footer b{colorvar(--acc);}
+
+@keyframes fadeUp{from{opacity0;transformtranslateY(12px);}to{opacity1;transformtranslateY(0);}}
+.panel,.kpi{animationfadeUp .4s ease both;}
+.kpinth-child(1){animation-delay.04s}.kpinth-child(2){animation-delay.08s}
+.kpinth-child(3){animation-delay.12s}.kpinth-child(4){animation-delay.16s}
+style
+head
+body
+
+!-- ── LOADING ── --
+div id=loading
+  div class=loaderdiv
+  div class=load-textĐang kết nối MongoDB...div
+  div class=load-sub id=loadSubFetching từ localhost5000div
+div
+
+!-- ── ERROR ── --
+div id=errorScreen
+  div class=err-icon⚠️div
+  div class=err-titleKhông kết nối được APIdiv
+  div class=err-msg id=errMsg
+    Hãy đảm bảo codeapi_server.pycode đang chạybrbr
+    codepython api_server.pycodebrbr
+    Sau đó nhấn Thử lại bên dưới.
+  div
+  button class=err-btn onclick=loadAll()↺ Thử lạibutton
+div
+
+!-- ── MAIN CONTENT (ẩn cho đến khi data load xong) ── --
+div id=app style=displaynone
+  div id=ttipdiv
+
+  header
+    div class=h-top
+      div class=h-tagNhacCuaTui Chart · EDA Dashboarddiv
+      div class=live-badgespan class=live-dotspanLive · MongoDBdiv
+    div
+    h1Vietnam TrendingbremMusicem — Top 50h1
+    div class=h-sub
+      Dữ liệu thực từ bNhacCuaTuib × Last.fm API · Pipeline webcrawling → merge → MongoDB → Dashboardbr
+      Phân tích Thống kê mô tả · Tương quan Pearson · IQR Outlier · Xếp hạng đa chỉ số
+    div
+    div class=h-updatedCập nhật lúc span id=updatedAt—spandiv
+  header
+
+  div class=kpi-row
+    div class=kpi
+      div class=kpi-labelBài hát trong chartdiv
+      div class=kpi-val style=colorvar(--cyan) id=kTotalSongs—div
+      div class=kpi-noteTop NhacCuaTui · bLive databdiv
+    div
+    div class=kpi
+      div class=kpi-labelNghệ sĩ độc đáodiv
+      div class=kpi-val style=colorvar(--acc) id=kArtists—div
+      div class=kpi-note id=kArtistNote—div
+    div
+    div class=kpi
+      div class=kpi-labelTổng lượt Tim NCTdiv
+      div class=kpi-val style=colorvar(--pink) id=kHearts—div
+      div class=kpi-noteTB b id=kAvgHearts—b  bàidiv
+    div
+    div class=kpi
+      div class=kpi-labelAvg. Listenersdiv
+      div class=kpi-val style=colorvar(--purple) id=kListeners—div
+      div class=kpi-notePer bài trên Last.fmdiv
+    div
+  div
+
+  div class=grid
+    div class=panel
+      div class=p-headspan class=p-dot style=backgroundvar(--cyan)spanspan class=p-titleTop 5 Ca Sĩ — Last.fm Listenersspandiv
+      div class=p-descgroupby('artist')['lastfm_listeners'].sum().sort_values().head(5)div
+      div class=chart-wrapcanvas id=cLcanvasdiv
+    div
+    div class=panel nr
+      div class=p-headspan class=p-dot style=backgroundvar(--pink)spanspan class=p-titleTop 5 Ca Sĩ — Lượt Tim NCTspandiv
+      div class=p-descgroupby('artist')['nct_hearts'].sum().sort_values().head(5)div
+      div class=chart-wrapcanvas id=cHcanvasdiv
+    div
+    div class=panel
+      div class=p-headspan class=p-dot style=backgroundvar(--acc)spanspan class=p-titlePhân Phối Total Score (Histogram)spandiv
+      div class=p-descRight-skewed — long tail effect thiểu số bài chiếm phần lớn tổng scorediv
+      div class=chart-wrapcanvas id=cDcanvasdiv
+    div
+    div class=panel nr
+      div class=p-headspan class=p-dot style=backgroundvar(--green)spanspan class=p-titleTop 6 Bài Tăng Trưởng Điểm Sốspandiv
+      div class=p-descscore_growth = total_score − initial_score · rank_growth columndiv
+      div class=chart-wrapcanvas id=cGcanvasdiv
+    div
+    div class=panel
+      div class=p-headspan class=p-dot style=backgroundvar(--acc)spanspan class=p-titleĐộ Lệch Phân Phối — Skewnessspandiv
+      div class=p-descdf[numeric_cols].skew() · Skewness  1 lệch phải mạnh, đặc trưng dữ liệu viraldiv
+      div class=skew-list id=skewListdiv
+      div class=irow
+        div class=ic
+          div class=ic-lblLong Tail Effectdiv
+          div class=ic-val style=colorvar(--acc) id=iLongTail—div
+          div class=ic-descsiêu hit chiếm phần lớn lượt tương tácdiv
+        div
+        div class=ic
+          div class=ic-lblAvg Engagement Ratediv
+          div class=ic-val style=colorvar(--cyan) id=iEngRate—div
+          div class=ic-descnct_shares  nct_hearts — đo độ viraldiv
+        div
+      div
+    div
+    div class=panel nr
+      div class=p-headspan class=p-dot style=backgroundvar(--purple)spanspan class=p-titleMa Trận Tương Quan Pearsonspandiv
+      div class=p-descdf[numeric_cols].corr(method='pearson') · −1 → +1div
+      div class=corr-leg
+        spani style=backgroundrgba(56,245,232,.8)iCao (0.8)span
+        spani style=backgroundrgba(155,109,255,.5)iTrung bìnhspan
+        spani style=background#222638iThấpspan
+      div
+      div style=displayflex;align-itemscenter;justify-contentcenter;height210px;
+        canvas id=cCorrcanvas
+      div
+    div
+    div class=panel full
+      div class=p-headspan class=p-dot style=backgroundvar(--blue)spanspan class=p-titleScatter — Last.fm Listeners × NCT Heartsspandiv
+      div class=p-descMỗi điểm = 1 bài · Kích thước ∝ NCT Shares · Màu vàng = siêu hit (Outlier IQR) · Di chuột xem chi tiếtdiv
+      div class=chart-wrap tallcanvas id=cSccanvasdiv
+    div
+    div class=panel
+      div class=p-headspan class=p-dot style=backgroundvar(--acc)spanspan class=p-titleBXH — Total Scorespandiv
+      div class=p-desclisteners + 50×hearts + 500×shares · sort_values(by='total_score')div
+      div id=rankTablediv
+    div
+    div class=panel nr
+      div class=p-headspan class=p-dot style=backgroundvar(--pink)spanspan class=p-titleSiêu Hit — Outliers (IQR Method)spandiv
+      div class=p-descdf[df['nct_hearts']  Q3 + 1.5×IQR] · phát hiện bài vượt ngưỡng bình thườngdiv
+      div class=out-list id=outListdiv
+      div class=iqr-box id=iqrBox—div
+    div
+  div
+
+  footer
+    divVietnam Trending Music EDA · bMongoDB Liveb · trending_music_in_Vietnam_dbdiv
+    divStack Python · Flask · MongoDB · BeautifulSoup · Last.fm API · Chart.jsdiv
+  footer
+div!-- #app --
+
+script
+const API = 'httplocalhost5000';
+
+ Chart instances — cần giữ ref để destroy khi reload
+let charts = {};
+
+ ─────────────────────────────────────────
+ ENTRY POINT
+ ─────────────────────────────────────────
+async function loadAll() {
+  showLoading('Đang kết nối MongoDB...');
+  hideError();
+
+  try {
+     Fetch song data & stats song song
+    setLoadSub('Fetching apidata và apistats...');
+    const [songsRes, statsRes] = await Promise.all([
+      fetch(`${API}apidata`),
+      fetch(`${API}apistats`)
+    ]);
+
+    if (!songsRes.ok  !statsRes.ok) throw new Error('API trả về lỗi');
+
+    const SONGS = await songsRes.json();
+    const S     = await statsRes.json();  { stats, top5_listeners, ..., corr, ... }
+
+    setLoadSub('Đang vẽ biểu đồ...');
+    await new Promise(r = setTimeout(r, 200));  Nhỏ delay để loading text hiện ra
+
+     Render tất cả
+    renderKPI(S.stats);
+    renderListeners(S.top5_listeners);
+    renderHearts(S.top5_hearts);
+    renderDist(S.bins_labels, S.bins_count);
+    renderGrowth(S.top_growth);
+    renderSkewness(S.skewness, S.stats);
+    renderCorr(S.corr);
+    renderScatter(SONGS, S.outliers);
+    renderRankTable(SONGS);
+    renderOutliers(S.outliers, S.iqr);
+
+     Cập nhật thời gian
+    document.getElementById('updatedAt').textContent = new Date().toLocaleString('vi-VN');
+
+    hideLoading();
+    document.getElementById('app').style.display = 'block';
+
+  } catch (err) {
+    console.error(err);
+    showError(err.message);
+  }
+}
+
+ ─────────────────────────────────────────
+ UI HELPERS
+ ─────────────────────────────────────────
+function showLoading(msg) {
+  document.getElementById('loading').classList.remove('hidden');
+  document.querySelector('#loading .load-text').textContent = msg;
+}
+function setLoadSub(t) { document.getElementById('loadSub').textContent = t; }
+function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+function showError(msg) {
+  hideLoading();
+  const el = document.getElementById('errorScreen');
+  el.style.display = 'flex';
+  document.getElementById('errMsg').innerHTML = `
+    Hãy đảm bảo codeapi_server.pycode đang chạybrbr
+    codepython api_server.pycodebrbr
+    Chi tiết lỗi code${msg}code`;
+}
+function hideError() { document.getElementById('errorScreen').style.display = 'none'; }
+
+ Destroy chart cũ trước khi tạo mới (tránh lỗi khi reload)
+function makeChart(id, config) {
+  if (charts[id]) { charts[id].destroy(); }
+  charts[id] = new Chart(document.getElementById(id), config);
+  return charts[id];
+}
+
+ Chart.js defaults
+Chart.defaults.color = '#5a6080';
+Chart.defaults.borderColor = '#252a3a';
+Chart.defaults.font.family = 'Plus Jakarta Sans', sans-serif;
+Chart.defaults.font.size = 11;
+const grid = () = ({ color '#1e2232', drawBorder false });
+const noL  = () = ({ display false });
+
+ ─────────────────────────────────────────
+ RENDER FUNCTIONS
+ ─────────────────────────────────────────
+
+function renderKPI(stats) {
+  const fmt = n = n = 1000000  (n1000000).toFixed(1)+'M'  n = 1000  Math.round(n1000)+'K'  n;
+  document.getElementById('kTotalSongs').textContent = stats.total_songs;
+  document.getElementById('kArtists').textContent    = stats.unique_artists;
+  document.getElementById('kArtistNote').innerHTML   =
+    `TB b${(stats.total_songsstats.unique_artists).toFixed(1)} bài  ca sĩb`;
+  document.getElementById('kHearts').textContent     = fmt(stats.total_hearts);
+  document.getElementById('kAvgHearts').textContent  = stats.avg_hearts.toLocaleString();
+  document.getElementById('kListeners').textContent  = fmt(stats.avg_listeners);
+}
+
+function renderListeners(top5) {
+  makeChart('cL', {
+    type 'bar',
+    data {
+      labels top5.map(x = x[0]),
+      datasets [{ data top5.map(x = x[1]),
+        backgroundColor ['#38f5e8','#2ed4c8','#24b3a8','#1a9288','#107168'],
+        borderRadius 5, borderSkipped false }]
+    },
+    options {
+      indexAxis 'y', responsive true, maintainAspectRatio false,
+      plugins { legend noL(), tooltip { callbacks { label c = ' ' + (c.raw1000).toFixed(0) + 'K listeners' } } },
+      scales { x { grid grid(), ticks { callback v = (v1000).toFixed(0)+'K' } }, y { grid { display false } } }
+    }
+  });
+}
+
+function renderHearts(top5) {
+  makeChart('cH', {
+    type 'bar',
+    data {
+      labels top5.map(x = x[0]),
+      datasets [{ data top5.map(x = x[1]),
+        backgroundColor ['#ff4d6d','#d93d59','#b32d45','#8d1e31','#671020'],
+        borderRadius 5, borderSkipped false }]
+    },
+    options {
+      indexAxis 'y', responsive true, maintainAspectRatio false,
+      plugins { legend noL(), tooltip { callbacks { label c = ' ' + (c.raw1000).toFixed(1) + 'K hearts' } } },
+      scales { x { grid grid(), ticks { callback v = (v1000).toFixed(0)+'K' } }, y { grid { display false } } }
+    }
+  });
+}
+
+function renderDist(labels, bins) {
+  makeChart('cD', {
+    type 'bar',
+    data {
+      labels,
+      datasets [{ data bins,
+        backgroundColor bins.map((_, i) = `hsla(${50 - i  7}, 100%, ${58 - i  4}%, 0.85)`),
+        borderRadius 5, borderSkipped false }]
+    },
+    options {
+      responsive true, maintainAspectRatio false, plugins { legend noL() },
+      scales {
+        x { grid { display false }, title { display true, text 'Total Score', color '#5a6080' } },
+        y { grid grid(), title { display true, text 'Số bài', color '#5a6080' }, ticks { stepSize 2 } }
+      }
+    }
+  });
+}
+
+function renderGrowth(top6) {
+  makeChart('cG', {
+    type 'bar',
+    data {
+      labels top6.map(s = s.title.length  17  s.title.slice(0, 16) + '…'  s.title),
+      datasets [{ data top6.map(s = s.score_growth),
+        backgroundColor ['#3dffa0','#32d988','#27b370','#1c8d58','#116740','#064128'],
+        borderRadius 5, borderSkipped false }]
+    },
+    options {
+      responsive true, maintainAspectRatio false,
+      plugins { legend noL(), tooltip { callbacks { label c = ' +' + (c.raw1000).toFixed(0) + 'K điểm' } } },
+      scales { x { grid { display false } }, y { grid grid(), ticks { callback v = (v1000).toFixed(0)+'K' } } }
+    }
+  });
+}
+
+function renderSkewness(skew, stats) {
+  const items = [
+    { label 'Listeners',   val skew.listeners,   max 6 },
+    { label 'NCT Hearts',  val skew.hearts,       max 6 },
+    { label 'NCT Shares',  val skew.shares,       max 6 },
+    { label 'Engagement',  val skew.engagement,   max 6 },
+  ];
+  const el = document.getElementById('skewList');
+  el.innerHTML = '';
+  items.forEach(it = {
+    const pct = Math.min(Math.abs(it.val)  it.max  50, 50);
+    const col = it.val  0  '#e8ff47'  '#38f5e8';
+    el.innerHTML += `div class=skew-row
+      span class=skew-lbl${it.label}span
+      div class=skew-trackdiv class=skew-bar style=width${pct}%;background${col};opacity.75divdiv
+      span class=skew-v style=color${col}${it.val  0  '+'  ''}${it.val}span
+    div`;
+  });
+   Insight cards
+  document.getElementById('iLongTail').textContent = 'Top ~15%';
+  document.getElementById('iEngRate').textContent  = stats.avg_engagement + '%';
+}
+
+function renderCorr(corr) {
+  const canvas = document.getElementById('cCorr');
+  const ctx = canvas.getContext('2d');
+  const lbl = ['Listeners', 'Hearts', 'Shares', 'Engagement'];
+  const mat = [
+    [1,        corr.lh, corr.ls, corr.le],
+    [corr.lh,  1,       corr.hs, corr.he],
+    [corr.ls,  corr.hs, 1,       corr.se],
+    [corr.le,  corr.he, corr.se, 1      ],
+  ];
+  const cell = 50, pL = 76, pT = 18;
+  canvas.width  = pL + cell  4;
+  canvas.height = pT + cell  4;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.font = '10px Plus Jakarta Sans'; ctx.fillStyle = '#5a6080';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  lbl.forEach((l, i) = ctx.fillText(l, pL - 5, pT + i  cell + cell  2));
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  lbl.forEach((l, i) = ctx.fillText(l, pL + i  cell + cell  2, pT - 2));
+
+  mat.forEach((row, r) = row.forEach((v, c) = {
+    const x = pL + c  cell, y = pT + r  cell;
+    let bg;
+    if (r === c)   bg = 'rgba(34,38,56,1)';
+    else if (v  0.8) bg = `rgba(56,245,232,${v  .85})`;
+    else if (v  0.5) bg = `rgba(155,109,255,${v  .75})`;
+    else if (v  0.2) bg = `rgba(155,109,255,${v  .4})`;
+    else              bg = 'rgba(34,38,56,.8)';
+    ctx.fillStyle = bg;
+    ctx.beginPath(); ctx.roundRect(x + 2, y + 2, cell - 4, cell - 4, 4); ctx.fill();
+    ctx.fillStyle = v  0.5  '#fff'  '#8890b0';
+    ctx.font = 'bold 11px Plus Jakarta Sans';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(v.toFixed(2), x + cell  2, y + cell  2);
+  }));
+}
+
+function renderScatter(songs, outliers) {
+  const maxS   = Math.max(...songs.map(s = s.nct_shares  1));
+  const outSet = new Set(outliers.map(o = o.title));
+  makeChart('cSc', {
+    type 'scatter',
+    data { datasets [{ label 'songs',
+      data            songs.map(s = ({ x s.lastfm_listeners  1000, y s.nct_hearts  1000 })),
+      backgroundColor songs.map(s = outSet.has(s.title)  'rgba(232,255,71,.85)'  'rgba(77,143,255,.6)'),
+      borderColor     songs.map(s = outSet.has(s.title)  'rgba(232,255,71,.35)'  'transparent'),
+      borderWidth 2,
+      pointRadius      songs.map(s = 4 + Math.sqrt((s.nct_shares  0)  maxS)  18),
+      pointHoverRadius songs.map(s = 6 + Math.sqrt((s.nct_shares  0)  maxS)  20),
+    }] },
+    options {
+      responsive true, maintainAspectRatio false,
+      plugins { legend noL(), tooltip { enabled false, external ctx2 = {
+        const t = document.getElementById('ttip');
+        if (ctx2.tooltip.opacity === 0) { t.style.opacity = 0; return; }
+        const s = songs[ctx2.tooltip.dataPoints[0].dataIndex];
+        t.innerHTML = `b style=colorvar(--acc)${s.title}bbr
+          span style=colorvar(--muted2)${(s.artist'').split(',').slice(0,2).join(', ')}spanbr
+          ❤️ ${(s.nct_hearts0).toLocaleString()} · 🎧 ${(s.lastfm_listeners0).toLocaleString()}br
+          🔁 ${(s.nct_shares0).toLocaleString()} shares`;
+        const {x, y} = ctx2.tooltip.caretRect;
+        t.style.left = (x + 12) + 'px'; t.style.top = (y - 8) + 'px'; t.style.opacity = 1;
+      }}},
+      scales {
+        x { grid grid(), title { display true, text 'Last.fm Listeners (K)', color '#5a6080' }, ticks { callback v = v + 'K' } },
+        y { grid grid(), title { display true, text 'NCT Hearts (K)',         color '#5a6080' }, ticks { callback v = v + 'K' } }
+      }
+    }
+  });
+}
+
+function renderRankTable(songs) {
+  const sorted = [...songs].sort((a, b) = (b.total_score0) - (a.total_score0)).slice(0, 20);
+  const maxSc  = sorted[0].total_score  1;
+  let h = 'table class=rtabletheadtrth#ththBài hát  Ca sĩththScorethtrtheadtbody';
+  sorted.forEach((s, i) = {
+    const cls = i === 0  'g'  i === 1  's'  i === 2  'b'  '';
+    const pct = ((s.total_score  0)  maxSc  100).toFixed(1);
+    const col = i  1  'var(--acc)'  i  3  'var(--cyan)'  'var(--blue)';
+    h += `tr
+      tdspan class=rn ${cls}${i + 1}spantd
+      td
+        div class=st${(s.title'').length  22  s.title.slice(0,21)+'…'  (s.title'—')}div
+        div class=sa${(s.artist'').split(',')[0].trim()}div
+      td
+      tddiv class=prog-wrap
+        div class=prog-trackdiv class=prog-fill style=width${pct}%;background${col}divdiv
+        span class=prog-val${((s.total_score0)1000).toFixed(0)}Kspan
+      divtdtr`;
+  });
+  h += 'tbodytable';
+  document.getElementById('rankTable').innerHTML = h;
+}
+
+function renderOutliers(outliers, iqr) {
+  const el = document.getElementById('outList');
+  el.innerHTML = '';
+  if (!outliers.length) {
+    el.innerHTML = 'div style=colorvar(--muted);font-size12px;padding12px 0Không có outlier trong dữ liệu hiện tạidiv';
+  } else {
+    outliers.forEach((s, i) = {
+      el.innerHTML += `div class=out-item
+        div class=out-n${i + 1}div
+        div class=out-info
+          div class=out-title${s.title  '—'}div
+          div class=out-artist${(s.artist'').split(',').slice(0,2).join(', ')}div
+        div
+        div class=out-val❤️ ${((s.nct_hearts0)1000).toFixed(1)}Kdiv
+      div`;
+    });
+  }
+  document.getElementById('iqrBox').innerHTML =
+    `Q1 = b${Math.round(iqr.Q1).toLocaleString()}b · 
+     Q3 = b${Math.round(iqr.Q3).toLocaleString()}b · 
+     IQR = b${Math.round(iqr.IQR).toLocaleString()}bbr
+     Ngưỡng ngoại lai bQ3 + 1.5×IQR = ${Math.round(iqr.upper).toLocaleString()} lượt timb`;
+}
+
+ ─────────────────────────────────────────
+ KHỞI CHẠY
+ ─────────────────────────────────────────
+loadAll();
+script
+body
+html
