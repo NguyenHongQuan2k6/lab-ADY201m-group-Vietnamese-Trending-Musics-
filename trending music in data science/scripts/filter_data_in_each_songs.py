@@ -9,6 +9,13 @@ try:
     with open(file_dau_vao, "r", encoding="utf-8") as f_in:
         information_page = f_in.read()
 
+    # =====================================================================
+    # GIAI ĐOẠN 4.2: NHẬN DIỆN VÀ TRÍCH XUẤT URL (URL EXTRACTION)
+    # - Thuật toán/Kỹ thuật: Áp dụng thuật toán tìm kiếm chuỗi tuần tự (Sequential String Search) kết hợp kỹ thuật tịnh tiến chỉ mục (Sliding Index/Pointer).
+    # - Cơ chế hoạt động: Quét qua toàn bộ mã nguồn HTML bằng phương thức `find()`. Mỗi khi phát hiện mốc định danh (start_marker), hệ thống tự động tính toán chu vi điểm cắt (vi_tri_ket_thuc) để trích xuất chính xác URL và ID bài hát. 
+    # - Hiệu năng: Sau mỗi lần trích xuất, con trỏ (pointer) lập tức được dời về vị trí mới để tiếp tục vòng quét. Kỹ thuật này giúp tránh việc quét lại các chuỗi đã xử lý, đảm bảo thuật toán đạt độ phức tạp tuyến tính O(N).
+    # =====================================================================
+
     start_marker = "https://www.nhaccuatui.com/song/"
     len_marker = len(start_marker) # Độ dài đoạn https... (khoảng 32 ký tự)
     ky_tu_muon_lay_them = 12       # Số ký tự mã bài hát phía sau
