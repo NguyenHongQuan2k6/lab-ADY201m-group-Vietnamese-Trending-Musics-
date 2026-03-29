@@ -24,6 +24,11 @@ if r_main_page.status_code == 200:
     print(f"Bắt đầu quét Nhaccuatui lúc: {gio_co_dinh}")
     print("Đang tìm kiếm dữ liệu chi tiết... (Sẽ mất khoảng vài giây)")
 
+    # =====================================================================
+    # GIAI ĐOẠN 4.3: CÀO DỮ LIỆU SÂU VÀ TIỀN XỬ LÝ (TEXT NORMALIZATION)
+    # - Khai thác Dữ liệu ẩn: Dùng BeautifulSoup và Regex để quét thẻ HTML/Script, trích xuất các chỉ số tương tác (Heart, Share) bị ẩn trên giao diện UI thông thường.
+    # - Kỹ thuật Text Normalization: Tên bài hát được xử lý loại bỏ các hậu tố nhiễu như (Official), (Remix) bằng Regex và chuyển về định dạng chuẩn. Bước chuẩn hóa này nhằm tối ưu hóa tỷ lệ khớp dữ liệu (Match Rate) ở bước gọi API quốc tế.
+    # =====================================================================
     for index in range(len(music)):
         song = music[index] 
         try:
